@@ -28,6 +28,4 @@ Key features:
 
 ---
 
-## 🗂️ Project Structure
-
 
