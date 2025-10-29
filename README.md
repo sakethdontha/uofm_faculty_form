@@ -1,6 +1,6 @@
 # 🎓 University of Memphis — Faculty Information Form
 
-This Streamlit web application allows faculty contacts from various universities to securely submit their institutional and contact details.  
+This Streamlit web application allows faculty contacts from various universities to securely submit different institutional and contact details.  
 Each submission is automatically saved to a local CSV file (`submissions.csv`) and an email notification is sent directly to the supervisor at the University of Memphis.
 
 ---
