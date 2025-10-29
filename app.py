@@ -3,13 +3,13 @@ import pandas as pd
 import os
 import re
 import base64
-
+import smtplib, ssl
+from email.message import EmailMessage
 
 # ----------------------------
 # Page Setup
 # ----------------------------
 st.set_page_config(page_title="University of Memphis — University Contact Information Form", page_icon="🎓", layout="centered")
-
 
 st.markdown(
     """
@@ -35,7 +35,7 @@ st.markdown(
 # ----------------------------
 # Background Image Setup
 # ----------------------------
-background_image = "background.jpg"  # 👈 replace with your image filename
+background_image = "background.jpg"
 
 if os.path.exists(background_image):
     with open(background_image, "rb") as f:
@@ -62,7 +62,6 @@ if os.path.exists(background_image):
 else:
     st.warning("⚠️ Background image not found. Please place 'background.jpg' in this folder.")
 
-
 # ----------------------------
 # Helpers
 # ----------------------------
@@ -76,11 +75,10 @@ def is_email(s: str) -> bool:
 if "num_universities" not in st.session_state:
     st.session_state.num_universities = 1
 
-
 # ----------------------------
 # Header Section (Logo + Title side by side)
 # ----------------------------
-logo_path = "uofm_logo2.png"  # 👈 ensure it's in the same folder
+logo_path = "uofm_logo2.png" 
 
 st.markdown(
     """
@@ -170,10 +168,8 @@ with c2:
 # ----------------------------
 # Enable Submit only when valid
 # ----------------------------
-# At least one complete university row:
 has_complete_row = any(all(v for v in entry.values()) for entry in university_data)
 
-# Optional: basic email check for rows that are complete
 if has_complete_row:
     for entry in university_data:
         if all(entry.values()) and not is_email(entry["Email"]):
@@ -206,7 +202,80 @@ if submit_clicked:
             pd.concat([old, df], ignore_index=True).to_csv(csv_path, index=False)
         else:
             df.to_csv(csv_path, index=False)
-        st.success("✅ Form submitted successfully! Your response has been successfully saved.")
+
+    # ----------------------------
+    # Send email to professor (HTML + CSV attachment)
+    # ----------------------------
+    EMAIL_ADDRESS = st.secrets.get("EMAIL_ADDRESS", os.getenv("EMAIL_ADDRESS", ""))
+    EMAIL_PASSWORD = st.secrets.get("EMAIL_PASSWORD", os.getenv("EMAIL_PASSWORD", ""))
+    PROFESSOR_EMAIL = st.secrets.get("PROFESSOR_EMAIL", os.getenv("PROFESSOR_EMAIL", ""))
+
+    if EMAIL_ADDRESS and EMAIL_PASSWORD and PROFESSOR_EMAIL:
+        try:
+            msg = EmailMessage()
+            msg["Subject"] = f"[UofM Contact Form] Submission from {faculty_name}"
+            msg["From"] = EMAIL_ADDRESS
+            msg["To"] = PROFESSOR_EMAIL
+
+            html_body = f"""
+            <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+                <h2 style="color:#00498F;">New University Contact Form Submission</h2>
+                <p><strong>Faculty Name:</strong> {faculty_name}</p>
+                <table border="1" cellpadding="8" cellspacing="0" style="border-collapse:collapse; width:100%;">
+                    <thead style="background-color:#00498F; color:white;">
+                        <tr>
+                            <th>University Name</th>
+                            <th>Contact Name</th>
+                            <th>Designation</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            """
+
+            for entry in valid_entries:
+                html_body += f"""
+                    <tr>
+                        <td>{entry['University Name']}</td>
+                        <td>{entry['Contact Name']}</td>
+                        <td>{entry['Designation']}</td>
+                        <td>{entry['Email']}</td>
+                    </tr>
+                """
+
+            html_body += """
+                    </tbody>
+                </table>
+                <p style="margin-top: 10px;">The full submission data is attached as <strong>submissions.csv</strong>.</p>
+                <p style="font-size: 0.9rem; color: #555;">This is an automated notification from the University Contact Form system.</p>
+            </div>
+            """
+
+            plain_text = "A new faculty submission has been received. Please check the attached CSV for full details."
+
+            msg.set_content(plain_text)
+            msg.add_alternative(html_body, subtype="html")
+
+            with open("submissions.csv", "rb") as f:
+                msg.add_attachment(
+                    f.read(),
+                    maintype="text",
+                    subtype="csv",
+                    filename="submissions.csv"
+                )
+
+            context = ssl.create_default_context()
+            with smtplib.SMTP("smtp.office365.com", 587) as smtp:
+                smtp.starttls(context=context)
+                smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+                smtp.send_message(msg)
+
+            st.success("✅ Form submitted successfully! Your response has been saved successfully.")
+        except Exception as e:
+            st.error(f"⚠️ Form saved, but email could not be sent. Error: {e}")
+    else:
+        st.warning("⚠️ Email credentials not configured. Please set EMAIL_ADDRESS, EMAIL_PASSWORD, and PROFESSOR_EMAIL in Streamlit secrets.")
+
 # ----------------------------
 # Footer
 # ----------------------------
@@ -229,7 +298,7 @@ st.markdown(
         font-weight: 600;
         border-top: 1.5px solid black;
         z-index: 100;
-        backdrop-filter: blur(4px); /* Optional soft blur for glassy look */
+        backdrop-filter: blur(4px);
     }}
     </style>
 
