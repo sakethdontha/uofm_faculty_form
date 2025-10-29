@@ -41,8 +41,7 @@ if os.path.exists(background_image):
     with open(background_image, "rb") as f:
         bg_data = base64.b64encode(f.read()).decode()
 
-    # You can adjust the transparency (0.0 = fully transparent, 1.0 = fully opaque)
-    opacity = 0.8  # 👈 change this value as needed
+    opacity = 0.8
 
     st.markdown(
         f"""
@@ -277,7 +276,7 @@ if submit_clicked:
 # ----------------------------
 # Footer
 # ----------------------------
-footer_opacity = 0.8  # 👈 Change this between 0.0 (fully transparent) and 1.0 (solid blue)
+footer_opacity = 0.8 
 
 st.markdown(
     f"""
