@@ -247,7 +247,6 @@ if submit_clicked:
                     </tbody>
                 </table>
                 <p style="margin-top: 10px;">The full submission data is attached as <strong>submissions.csv</strong>.</p>
-                <p style="font-size: 0.9rem; color: #555;">This is an automated notification from the University Contact Form system.</p>
             </div>
             """
 
@@ -265,8 +264,7 @@ if submit_clicked:
                 )
 
             context = ssl.create_default_context()
-            with smtplib.SMTP("smtp.office365.com", 587) as smtp:
-                smtp.starttls(context=context)
+            with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as smtp:
                 smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
                 smtp.send_message(msg)
 
