@@ -196,83 +196,82 @@ if submit_clicked:
     else:
         df = pd.DataFrame([{"Faculty Name": faculty_name.strip(), **e} for e in valid_entries])
         csv_path = "submissions.csv"
-        df.to_csv(csv_path, index=False)
-        temp_csv = "new_submissions.csv"
-        df.to_csv(temp_csv, index=False)
-
-        # ----------------------------
-        # Send email to professor (HTML + CSV attachment)
-        # ----------------------------
-        EMAIL_ADDRESS = st.secrets.get("EMAIL_ADDRESS", os.getenv("EMAIL_ADDRESS", ""))
-        EMAIL_PASSWORD = st.secrets.get("EMAIL_PASSWORD", os.getenv("EMAIL_PASSWORD", ""))
-        PROFESSOR_EMAIL = st.secrets.get("PROFESSOR_EMAIL", os.getenv("PROFESSOR_EMAIL", ""))
-
-        if EMAIL_ADDRESS and EMAIL_PASSWORD and PROFESSOR_EMAIL:
-            try:
-                msg = EmailMessage()
-                msg["Subject"] = f"[UofM Contact Form] Submission from {faculty_name}"
-                msg["From"] = EMAIL_ADDRESS
-                msg["To"] = PROFESSOR_EMAIL
-
-                # Build HTML body
-                html_body = f"""
-                <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-                    <h2 style="color:#00498F;">New University Contact Form Submission</h2>
-                    <p><strong>Faculty Name:</strong> {faculty_name}</p>
-                    <table border="1" cellpadding="8" cellspacing="0" style="border-collapse:collapse; width:100%;">
-                        <thead style="background-color:#00498F; color:white;">
-                            <tr>
-                                <th>University Name</th>
-                                <th>Contact Name</th>
-                                <th>Designation</th>
-                                <th>Email</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                """
-
-                for entry in valid_entries:
-                    html_body += f"""
-                        <tr>
-                            <td>{entry['University Name']}</td>
-                            <td>{entry['Contact Name']}</td>
-                            <td>{entry['Designation']}</td>
-                            <td>{entry['Email']}</td>
-                        </tr>
-                    """
-
-                html_body += """
-                        </tbody>
-                    </table>
-                    <p style="margin-top: 10px;">Attached: <strong>new_submissions.csv</strong> (only latest submission).</p>
-                </div>
-                """
-
-                msg.set_content("A new faculty submission has been received. Please check the attached CSV.")
-                msg.add_alternative(html_body, subtype="html")
-
-                # Attach only the *new* CSV
-                with open(temp_csv, "rb") as f:
-                    msg.add_attachment(
-                        f.read(),
-                        maintype="text",
-                        subtype="csv",
-                        filename="new_submissions.csv"
-                    )
-
-                # Send via Gmail SMTP
-                context = ssl.create_default_context()
-                with smtplib.SMTP("smtp.gmail.com", 587) as smtp:
-                    smtp.starttls(context=context)
-                    smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-                    smtp.send_message(msg)
-
-                st.success("✅ Form submitted successfully! Your response has been saved and emailed (only the new entries) to the professor.")
-            except Exception as e:
-                st.error(f"⚠️ Form saved, but email could not be sent. Error: {e}")
+        if os.path.exists(csv_path):
+            old = pd.read_csv(csv_path)
+            pd.concat([old, df], ignore_index=True).to_csv(csv_path, index=False)
         else:
-            st.warning("⚠️ Email credentials not configured. Please set EMAIL_ADDRESS, EMAIL_PASSWORD, and PROFESSOR_EMAIL in Streamlit secrets.")
+            df.to_csv(csv_path, index=False)
 
+    # ----------------------------
+    # Send email to professor (HTML + CSV attachment)
+    # ----------------------------
+    EMAIL_ADDRESS = st.secrets.get("EMAIL_ADDRESS", os.getenv("EMAIL_ADDRESS", ""))
+    EMAIL_PASSWORD = st.secrets.get("EMAIL_PASSWORD", os.getenv("EMAIL_PASSWORD", ""))
+    PROFESSOR_EMAIL = st.secrets.get("PROFESSOR_EMAIL", os.getenv("PROFESSOR_EMAIL", ""))
+
+    if EMAIL_ADDRESS and EMAIL_PASSWORD and PROFESSOR_EMAIL:
+        try:
+            msg = EmailMessage()
+            msg["Subject"] = f"[UofM Contact Form] Submission from {faculty_name}"
+            msg["From"] = EMAIL_ADDRESS
+            msg["To"] = PROFESSOR_EMAIL
+
+            html_body = f"""
+            <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+                <h2 style="color:#00498F;">New University Contact Form Submission</h2>
+                <p><strong>Faculty Name:</strong> {faculty_name}</p>
+                <table border="1" cellpadding="8" cellspacing="0" style="border-collapse:collapse; width:100%;">
+                    <thead style="background-color:#00498F; color:white;">
+                        <tr>
+                            <th>University Name</th>
+                            <th>Contact Name</th>
+                            <th>Designation</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            """
+
+            for entry in valid_entries:
+                html_body += f"""
+                    <tr>
+                        <td>{entry['University Name']}</td>
+                        <td>{entry['Contact Name']}</td>
+                        <td>{entry['Designation']}</td>
+                        <td>{entry['Email']}</td>
+                    </tr>
+                """
+
+            html_body += """
+                    </tbody>
+                </table>
+                <p style="margin-top: 10px;">The full submission data is attached as <strong>submissions.csv</strong>.</p>
+            </div>
+            """
+
+            plain_text = "A new faculty submission has been received. Please check the attached CSV for full details."
+
+            msg.set_content(plain_text)
+            msg.add_alternative(html_body, subtype="html")
+
+            with open("submissions.csv", "rb") as f:
+                msg.add_attachment(
+                    f.read(),
+                    maintype="text",
+                    subtype="csv",
+                    filename="submissions.csv"
+                )
+
+            context = ssl.create_default_context()
+            with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as smtp:
+                smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+                smtp.send_message(msg)
+
+            st.success("✅ Form submitted successfully! Your response has been saved successfully.")
+        except Exception as e:
+            st.error(f"⚠️ Form saved, but email could not be sent. Error: {e}")
+    else:
+        st.warning("⚠️ Email credentials not configured. Please set EMAIL_ADDRESS, EMAIL_PASSWORD, and PROFESSOR_EMAIL in Streamlit secrets.")
 
 # ----------------------------
 # Footer
