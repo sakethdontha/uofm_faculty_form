@@ -9,73 +9,15 @@ from email.message import EmailMessage
 
 hide_st_style = """
     <style>
-    #MainMenu, header, footer {visibility: hidden !important;}
-    .stAppToolbar, .stToolbar, .stActionButton, .stAppDeployButton,
-    .stDeployButton, [data-testid="stToolbar"] {display: none !important;}
-    [data-testid="stStatusWidget"],
-    iframe[title="streamlit-badge"],
-    div[title="Manage app"],
-    div[title="View app status"],
-    div[data-testid="stDecoration"],
-    div[style*="bottom: 0px"][style*="right: 0px"],
-    [class*="floatingActionButton"],
-    [class*="StyledDeployButton"],
-    [class*="stStatusWidget"],
-    [class*="stDeployButton"],
-    [class*="stAppDeployButton"],
-    [class*="stDecoration"],
-    [class*="floating"] {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
-    }
+    #MainMenu {visibility: hidden;}              /* hides top-right menu (3 dots) */
+    footer {visibility: hidden;}                 /* hides footer text */
+    header {visibility: hidden;}                 /* hides "Fork" and GitHub icon */
+    .stAppDeployButton {display: none;}          /* hides deploy/fork button */
+    .stActionButton {display: none;}             /* extra safeguard for fork button */
+    .stToolbar {visibility: hidden;}             /* hides toolbar if shown */
     </style>
-    <script>
-    // Force-hide Streamlit Cloud's floating icons inside shadow DOM
-    const hideFloatingIcons = () => {
-        const elements = [
-            'streamlit-badge',
-            'Manage app',
-            'View app status',
-            'stStatusWidget',
-            'stDecoration',
-            'floatingActionButton'
-        ];
-        const all = document.querySelectorAll('*');
-        all.forEach(el => {
-            elements.forEach(match => {
-                if (el.shadowRoot) {
-                    el.shadowRoot.querySelectorAll('*').forEach(inner => {
-                        if ((inner.title && inner.title.includes(match)) || inner.className.includes(match)) {
-                            inner.style.display = 'none';
-                            inner.style.visibility = 'hidden';
-                        }
-                    });
-                }
-            });
-        });
-    };
-    setInterval(hideFloatingIcons, 1500); // recheck every 1.5s
-    </script>
 """
 st.markdown(hide_st_style, unsafe_allow_html=True)
-
-hide_streamlit_badges = """
-    <style>
-    /* Hide Streamlit floating footer badges */
-    .stAppDeployButton {display: none !important;}
-    .viewerBadge_container__1QSob {display: none !important;}
-    .st-emotion-cache-h5rgaw {display: none !important;}
-    .st-emotion-cache-12fmjuu {display: none !important;}
-    .stDecoration {display: none !important;}
-    .stToolbar {display: none !important;}
-    </style>
-"""
-st.markdown(hide_streamlit_badges, unsafe_allow_html=True)
-
-
-
 
 # ----------------------------
 # Page Setup
@@ -102,9 +44,6 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-
-
-
 
 # ----------------------------
 # Background Image Setup
