@@ -7,7 +7,6 @@ import smtplib, ssl
 from email.message import EmailMessage
 
 
-# Hide Streamlit's default menu, footer, and deploy/fork toolbar
 hide_st_style = """
     <style>
     #MainMenu {visibility: hidden;}              /* hides top-right menu (3 dots) */
@@ -286,6 +285,19 @@ if submit_clicked:
             st.error(f"⚠️ Form saved, but email could not be sent. Error: {e}")
     else:
         st.warning("⚠️ Email credentials not configured. Please set EMAIL_ADDRESS, EMAIL_PASSWORD, and PROFESSOR_EMAIL in Streamlit secrets.")
+
+
+hide_st_style = """
+    <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    .stAppDeployButton {display: none;}
+    .stActionButton {display: none;}
+    .stToolbar {visibility: hidden;}
+    </style>
+"""
+st.markdown(hide_st_style, unsafe_allow_html=True)
 
 # ----------------------------
 # Footer
