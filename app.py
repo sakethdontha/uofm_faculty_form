@@ -9,15 +9,50 @@ from email.message import EmailMessage
 
 hide_st_style = """
     <style>
-    #MainMenu {visibility: hidden;}              /* hides top-right menu (3 dots) */
-    footer {visibility: hidden;}                 /* hides footer text */
-    header {visibility: hidden;}                 /* hides "Fork" and GitHub icon */
-    .stAppDeployButton {display: none;}          /* hides deploy/fork button */
-    .stActionButton {display: none;}             /* extra safeguard for fork button */
-    .stToolbar {visibility: hidden;}             /* hides toolbar if shown */
+    /* Hide Streamlit default UI (menu, GitHub, etc.) */
+    #MainMenu {visibility: hidden !important;}
+    header {visibility: hidden !important;}
+    footer {visibility: hidden !important;}
+    .stAppToolbar, .stToolbar, .stActionButton,
+    .stAppDeployButton, .stDeployButton, [data-testid="stToolbar"] {
+        display: none !important;
+    }
+
+    /* Hide floating icons (green circle, red crown, status widget, etc.) */
+    [data-testid="stStatusWidget"],
+    iframe[title="streamlit-badge"],
+    div[title="Manage app"],
+    div[title="View app status"],
+    div[data-testid="stDecoration"],
+    div[style*="bottom: 0px"][style*="right: 0px"],
+    div[style*="z-index: 9999"],
+    [class*="floatingActionButton"],
+    [class*="StyledDeployButton"],
+    [class*="stStatusWidget"],
+    [class*="stDeployButton"],
+    [class*="stAppDeployButton"],
+    [class*="stDecoration"],
+    [class*="floating"] {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    /* Deep hide (for Streamlit Cloud's shadow DOM toolbar) */
+    ::shadow [data-testid="stStatusWidget"],
+    ::shadow [title="Manage app"],
+    ::shadow [title="View app status"] {
+        display: none !important;
+    }
+
+    /* Catch any last floating buttons */
+    div[style*="bottom: 0px"][style*="right: 0px"] button {
+        display: none !important;
+        visibility: hidden !important;
+    }
     </style>
 """
 st.markdown(hide_st_style, unsafe_allow_html=True)
+
 
 # ----------------------------
 # Page Setup
