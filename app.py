@@ -9,23 +9,15 @@ from email.message import EmailMessage
 
 hide_st_style = """
     <style>
-    /* Hide Streamlit default UI (menu, GitHub, etc.) */
-    #MainMenu {visibility: hidden !important;}
-    header {visibility: hidden !important;}
-    footer {visibility: hidden !important;}
-    .stAppToolbar, .stToolbar, .stActionButton,
-    .stAppDeployButton, .stDeployButton, [data-testid="stToolbar"] {
-        display: none !important;
-    }
-
-    /* Hide floating icons (green circle, red crown, status widget, etc.) */
+    #MainMenu, header, footer {visibility: hidden !important;}
+    .stAppToolbar, .stToolbar, .stActionButton, .stAppDeployButton,
+    .stDeployButton, [data-testid="stToolbar"] {display: none !important;}
     [data-testid="stStatusWidget"],
     iframe[title="streamlit-badge"],
     div[title="Manage app"],
     div[title="View app status"],
     div[data-testid="stDecoration"],
     div[style*="bottom: 0px"][style*="right: 0px"],
-    div[style*="z-index: 9999"],
     [class*="floatingActionButton"],
     [class*="StyledDeployButton"],
     [class*="stStatusWidget"],
@@ -35,23 +27,40 @@ hide_st_style = """
     [class*="floating"] {
         display: none !important;
         visibility: hidden !important;
-    }
-
-    /* Deep hide (for Streamlit Cloud's shadow DOM toolbar) */
-    ::shadow [data-testid="stStatusWidget"],
-    ::shadow [title="Manage app"],
-    ::shadow [title="View app status"] {
-        display: none !important;
-    }
-
-    /* Catch any last floating buttons */
-    div[style*="bottom: 0px"][style*="right: 0px"] button {
-        display: none !important;
-        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
     }
     </style>
+    <script>
+    // Force-hide Streamlit Cloud's floating icons inside shadow DOM
+    const hideFloatingIcons = () => {
+        const elements = [
+            'streamlit-badge',
+            'Manage app',
+            'View app status',
+            'stStatusWidget',
+            'stDecoration',
+            'floatingActionButton'
+        ];
+        const all = document.querySelectorAll('*');
+        all.forEach(el => {
+            elements.forEach(match => {
+                if (el.shadowRoot) {
+                    el.shadowRoot.querySelectorAll('*').forEach(inner => {
+                        if ((inner.title && inner.title.includes(match)) || inner.className.includes(match)) {
+                            inner.style.display = 'none';
+                            inner.style.visibility = 'hidden';
+                        }
+                    });
+                }
+            });
+        });
+    };
+    setInterval(hideFloatingIcons, 1500); // recheck every 1.5s
+    </script>
 """
 st.markdown(hide_st_style, unsafe_allow_html=True)
+
 
 
 # ----------------------------
