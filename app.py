@@ -89,6 +89,25 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+
+hide_streamlit_style = """
+    <style>
+    /* Hide Streamlit footer and toolbar */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    .stAppDeployButton {display: none;}
+    .stToolbar {display: none;}
+    .viewerBadge_container__1QSob {display: none !important;}
+    .stDecoration {display: none !important;}
+    .stActionButton {display: none;}
+    .st-emotion-cache-12fmjuu {display: none !important;}  /* GitHub icon */
+    .st-emotion-cache-h5rgaw {display: none !important;}  /* "Made with Streamlit" footer */
+    </style>
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
+
 # ----------------------------
 # Background Image Setup
 # ----------------------------
