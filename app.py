@@ -19,6 +19,23 @@ hide_st_style = """
 """
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
+hide_env_icons = """
+    <style>
+    [data-testid="stStatusWidget"],
+    .stAppDeployButton,
+    .stDeployButton,
+    .stAppToolbar,
+    iframe[title="streamlit-badge"],
+    div[title="Manage app"],
+    div[title="View app status"],
+    div[data-testid="stDecoration"],
+    div[style*="bottom: 0px"] button[title] {
+        display: none !important;
+    }
+    </style>
+"""
+st.markdown(hide_env_icons, unsafe_allow_html=True)
+
 # ----------------------------
 # Page Setup
 # ----------------------------
@@ -287,17 +304,6 @@ if submit_clicked:
         st.warning("⚠️ Email credentials not configured. Please set EMAIL_ADDRESS, EMAIL_PASSWORD, and PROFESSOR_EMAIL in Streamlit secrets.")
 
 
-hide_st_style = """
-    <style>
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
-    .stAppDeployButton {display: none;}
-    .stActionButton {display: none;}
-    .stToolbar {visibility: hidden;}
-    </style>
-"""
-st.markdown(hide_st_style, unsafe_allow_html=True)
 
 # ----------------------------
 # Footer
