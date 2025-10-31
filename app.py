@@ -7,18 +7,6 @@ import smtplib, ssl
 from email.message import EmailMessage
 
 
-hide_st_style = """
-    <style>
-    #MainMenu {visibility: hidden;}              /* hides top-right menu (3 dots) */
-    footer {visibility: hidden;}                 /* hides footer text */
-    header {visibility: hidden;}                 /* hides "Fork" and GitHub icon */
-    .stAppDeployButton {display: none;}          /* hides deploy/fork button */
-    .stActionButton {display: none;}             /* extra safeguard for fork button */
-    .stToolbar {visibility: hidden;}             /* hides toolbar if shown */
-    </style>
-"""
-st.markdown(hide_st_style, unsafe_allow_html=True)
-
 # ----------------------------
 # Page Setup
 # ----------------------------
