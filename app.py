@@ -19,6 +19,12 @@ hide_st_style = """
 """
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
+
+# ----------------------------
+# Page Setup
+# ----------------------------
+st.set_page_config(page_title="University of Memphis — University Contact Information Form", page_icon="🎓", layout="centered")
+
 hide_streamlit_footer_icons = """
     <style>
     /* Hide Streamlit floating bottom icons */
@@ -31,11 +37,6 @@ hide_streamlit_footer_icons = """
     </style>
 """
 st.markdown(hide_streamlit_footer_icons, unsafe_allow_html=True)
-
-# ----------------------------
-# Page Setup
-# ----------------------------
-st.set_page_config(page_title="University of Memphis — University Contact Information Form", page_icon="🎓", layout="centered")
 
 st.markdown(
     """
