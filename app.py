@@ -25,18 +25,38 @@ st.markdown(hide_st_style, unsafe_allow_html=True)
 # ----------------------------
 st.set_page_config(page_title="University of Memphis — University Contact Information Form", page_icon="🎓", layout="centered")
 
-hide_streamlit_footer_icons = """
-    <style>
-    /* Hide Streamlit floating bottom icons */
-    .stAppDeployButton {display: none !important;}
-    .viewerBadge_container__1QSob {display: none !important;}
-    .st-emotion-cache-h5rgaw {display: none !important;}
-    .st-emotion-cache-12fmjuu {display: none !important;}
-    .stDecoration {display: none !important;}
-    .stToolbar {display: none !important;}
-    </style>
-"""
-st.markdown(hide_streamlit_footer_icons, unsafe_allow_html=True)
+hide_streamlit_style = """
+                <style>
+                div[data-testid="stToolbar"] {
+                visibility: hidden;
+                height: 0%;
+                position: fixed;
+                }
+                div[data-testid="stDecoration"] {
+                visibility: hidden;
+                height: 0%;
+                position: fixed;
+                }
+                div[data-testid="stStatusWidget"] {
+                visibility: hidden;
+                height: 0%;
+                position: fixed;
+                }
+                #MainMenu {
+                visibility: hidden;
+                height: 0%;
+                }
+                header {
+                visibility: hidden;
+                height: 0%;
+                }
+                footer {
+                visibility: hidden;
+                height: 0%;
+                }
+                </style>
+                """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 st.markdown(
     """
