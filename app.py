@@ -19,6 +19,62 @@ hide_st_style = """
 """
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
+hide_st_style = """
+    <style>
+    /* Hide Streamlit top and footer menus */
+    #MainMenu, header, footer {visibility: hidden !important;}
+    .stAppToolbar, .stToolbar, .stActionButton, .stAppDeployButton,
+    .stDeployButton, [data-testid="stToolbar"] {display: none !important;}
+
+    /* Hide Streamlit Cloud footer icons and profile preview */
+    a[href*="streamlit.io/cloud"],
+    a[href*="share.streamlit.io"],
+    img[alt="App Creator Avatar"],
+    [data-testid="appCreatorAvatar"],
+    [class*="_profileContainer_"],
+    [class*="_profilePreview_"],
+    [class*="_profileImage_"],
+    [class*="_viewerBadge_"],
+    [class*="_container_"],
+    [class*="floatingActionButton"],
+    [class*="StyledDeployButton"],
+    [class*="stDecoration"] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+    </style>
+
+    <script>
+    // Keep rechecking and removing icons from Streamlit Cloud’s shadow DOM
+    function hideStreamlitBadges() {
+        const selectors = [
+            'a[href*="streamlit.io/cloud"]',
+            'a[href*="share.streamlit.io"]',
+            'img[alt="App Creator Avatar"]',
+            '[data-testid="appCreatorAvatar"]',
+            '[class*="_profileContainer_"]',
+            '[class*="_profilePreview_"]',
+            '[class*="_viewerBadge_"]'
+        ];
+        selectors.forEach(sel => {
+            document.querySelectorAll(sel).forEach(el => el.remove());
+        });
+        // Also handle shadow roots
+        document.querySelectorAll('*').forEach(el => {
+            if (el.shadowRoot) {
+                selectors.forEach(sel => {
+                    el.shadowRoot.querySelectorAll(sel).forEach(inner => inner.remove());
+                });
+            }
+        });
+    }
+    // Run repeatedly (for Streamlit's re-renders)
+    setInterval(hideStreamlitBadges, 1000);
+    </script>
+"""
+st.markdown(hide_st_style, unsafe_allow_html=True)
 
 
 
