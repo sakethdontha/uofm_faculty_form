@@ -19,6 +19,27 @@ hide_st_style = """
 """
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
+hide_st_style = """
+    <style>
+    /* Hide Streamlit Cloud footer icons and overlays */
+    a[href*="streamlit.io/cloud"],
+    [class*="_viewerBadge_"],
+    [class*="_profileContainer_"],
+    [class*="_profilePreview_"],
+    [class*="stDecoration"],
+    [class*="floatingActionButton"],
+    [class*="StyledDeployButton"],
+    [class*="stStatusWidget"] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+    </style>
+"""
+st.markdown(hide_st_style, unsafe_allow_html=True)
+
+
 
 # ----------------------------
 # Page Setup
